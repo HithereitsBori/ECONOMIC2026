@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{SITE_TITLE}}</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="คู่มือหน้างาน {{EVENT_NAME}} — กำหนดการ ผู้พูด และข้อมูลสำหรับวันงาน 4–6 พ.ย. 2026">
+<meta name="theme-color" content="#0E0F13">
+<meta property="og:title" content="{{SITE_TITLE}}">
+<meta property="og:description" content="คู่มือหน้างาน {{EVENT_NAME}} · 4–6 พ.ย. 2026">
+<meta property="og:type" content="website">
+<meta name="build-id" content="{{BUILD_ID}}">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<!-- @if attendee -->
+<body class="aud-attendee">
+<!-- @endif -->
+<!-- @if staff -->
+<body class="aud-staff" data-audience="staff">
+<div id="staff-only-bar" class="staff-only-bar" role="note">🔒 STAFF ONLY — ลิงก์นี้ไม่มีรหัสผ่าน ห้ามส่งต่อ ห้ามใส่ข้อมูลอ่อนไหว</div>
+<!-- @endif -->
+<a class="skip" href="#main">ข้ามไปเนื้อหา</a>
+<header class="hdr">
+  <div class="brandrow">
+    <div class="logo-ph" aria-label="รอโลโก้">รอ<br>โลโก้</div>
+    <div class="brandtext">
+<!-- @if attendee -->
+      <div class="kicker">คู่มือผู้เข้าร่วมงาน</div>
+<!-- @endif -->
+<!-- @if staff -->
+      <div class="kicker">คู่มือทีมงาน</div>
+<!-- @endif -->
+      <h1 id="event-name">{{EVENT_NAME}}</h1>
+      <div class="tagline" id="event-tagline"></div>
+    </div>
+  </div>
+  <p class="meta" id="event-meta"></p>
+</header>
+
+<div id="fixtures-banner" class="notice sample" role="note" hidden><b>ข้อมูลตัวอย่าง — ไม่ใช่กำหนดการจริง</b>หน้านี้ใช้ข้อมูลทดสอบสำหรับดูหน้าตาเท่านั้น</div>
+
+<div class="statusbar" id="statusbar" data-state="loading" role="status" aria-live="polite">
+  <span class="dot" aria-hidden="true"></span>
+  <div class="txt"><b id="status-text">กำลังโหลดข้อมูล…</b><small id="last-updated">เวลาประเทศไทย (GMT+7)</small></div>
+  <button type="button" class="refresh" id="refresh-btn" aria-label="รีเฟรชข้อมูล">
+    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>รีเฟรช</span>
+  </button>
+</div>
+<div id="fallback-banner" class="notice warn" role="alert" hidden></div>
+
+<main id="main" tabindex="-1">
+  <!-- Agenda (shared) -->
+  <section id="tab-agenda" class="tab" data-tab="agenda">
+    <div class="filters">
+      <div class="days" id="day-tabs" role="group" aria-label="เลือกวัน"></div>
+      <div class="chips" id="zone-tabs-schedule" role="group" aria-label="เลือกเวที"></div>
+      <p class="tzlabel" id="tz-label"></p>
+    </div>
+    <div id="loading-state" class="list" aria-hidden="true">
+      <div class="skel-card"><div class="skel"></div><div class="skel"></div></div>
+      <div class="skel-card"><div class="skel"></div><div class="skel"></div></div>
+      <div class="skel-card"><div class="skel"></div><div class="skel"></div></div>
+    </div>
+    <div id="not-configured-state" class="nodata" hidden>
+      <h2>ยังไม่ได้เชื่อมข้อมูล Agenda</h2>
+      <p>ทีมงานกำลังตั้งค่า — โปรดกลับมาตรวจอีกครั้ง</p>
+    </div>
+    <div id="agenda-pending-state" class="nodata" hidden>
+      <h2>Agenda กำลังรอการยืนยันจากทีมงาน</h2>
+      <p>โปรดกลับมาตรวจอีกครั้ง</p>
+    </div>
+    <div id="error-state" class="nodata" hidden>
+      <h2>โหลดข้อมูลไม่สำเร็จ</h2>
+      <p>ไม่มีข้อมูลสำรองในเครื่อง ตรวจสอบสัญญาณแล้วลองใหม่</p>
+      <button type="button" class="btn" id="retry-btn">ลองใหม่</button>
+    </div>
+    <div id="main-content" hidden>
+      <div id="schedule-list" class="list"></div>
+      <div id="day-empty" class="nodata small" hidden><p>ยังไม่มีรายการที่เผยแพร่สำหรับวัน/เวทีนี้</p></div>
+    </div>
+<!-- @if attendee -->
+    <div id="survey-cta" class="cta" hidden></div>
+<!-- @endif -->
+  </section>
+
+<!-- @if attendee -->
+  <section id="tab-speakers" class="tab" data-tab="speakers" hidden>
+    <h2 class="sec-h">ผู้พูด</h2>
+    <p class="sec-sub">รายชื่อจากเซสชันที่เผยแพร่แล้ว · รูปผู้พูดรอไฟล์ที่ได้รับอนุญาต</p>
+    <div id="speakers-list" class="list"></div>
+  </section>
+<!-- @endif -->
+
+  <section id="tab-faq" class="tab" data-tab="faq" hidden>
+    <h2 class="sec-h">คำถามที่พบบ่อย</h2>
+    <div class="info-card" id="quick-info"></div>
+    <div id="faq-public" class="list"></div>
+  </section>
+
+<!-- @if attendee -->
+  <section id="tab-survey" class="tab" data-tab="survey" hidden>
+    <div id="survey-section" class="hero-card"></div>
+  </section>
+<!-- @endif -->
+
+<!-- @if staff -->
+  <section id="tab-staff" class="tab" data-tab="staff" hidden>
+    <h2 class="sec-h">🔒 พื้นที่ทีมงาน / ตอบผู้ร่วมงาน</h2>
+    <p class="sec-sub">ข้อมูลจากชีตทีมงานที่อนุมัติแล้วเท่านั้น · ไม่มีรหัสผ่าน ห้ามใส่ข้อมูลอ่อนไหว</p>
+    <div id="staff-faq" class="list"></div>
+    <h3 class="sec-h">FAQ สำหรับตอบผู้ร่วมงาน (ชุดเดียวกับหน้าผู้เข้าร่วม)</h3>
+    <div id="staff-public-faq" class="list"></div>
+  </section>
+<!-- @endif -->
+
+  <footer class="foot">มีข้อสงสัย สอบถามเจ้าหน้าที่ในงาน</footer>
+</main>
+
+<div id="session-backdrop" class="scrim" hidden></div>
+<div id="session-sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="grab" aria-hidden="true"></div>
+  <button type="button" class="close" id="sheet-close" aria-label="ปิด">✕</button>
+  <div id="session-sheet-content"></div>
+</div>
+
+<nav id="bottom-nav" class="bn" aria-label="เมนูหลัก">
+  <button type="button" data-tab="agenda" aria-current="page"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda</button>
+<!-- @if attendee -->
+  <button type="button" data-tab="speakers"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>ผู้พูด</button>
+<!-- @endif -->
+  <button type="button" data-tab="faq"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>FAQ</button>
+<!-- @if attendee -->
+  <button type="button" data-tab="survey"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>แบบสอบถาม</button>
+<!-- @endif -->
+<!-- @if staff -->
+  <button type="button" data-tab="staff"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>พื้นที่ทีมงาน</button>
+<!-- @endif -->
+</nav>
+</body>
+</html>

@@ -1,0 +1,2 @@
+faq_id,audience,category,question,answer,publication_status,hold_flag,sort_order
+PUB-01,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] SHOULD_NOT_RENDER_FAQ_REVIEW,,REVIEW,HOLD,1

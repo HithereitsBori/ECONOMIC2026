@@ -1,0 +1,17 @@
+session_id,stage,day,date,start,end,topic_main,topic_sub,speakers,moderators,publication_status,hold_flag,onsite_status,onsite_note,stream_url
+EX-D1-01,Main Stage,1,2026-11-04,09:00,09:45,[ตัวอย่าง] เซสชันเปิดงาน,[ตัวอย่าง] หัวข้อย่อยเปิดงาน,"[ตัวอย่าง] ผู้พูด ก — [ตัวอย่าง] ตำแหน่งที่ยาวมากเพื่อทดสอบการตัดบรรทัดบนจอมือถือขนาด 360px ประธานเจ้าหน้าที่บริหาร บริษัทตัวอย่างจำกัด (มหาชน)
+[ตัวอย่าง] ผู้พูด ข — [ตัวอย่าง] ผู้อำนวยการ
+[ตัวอย่าง] ผู้พูด ค",[ตัวอย่าง] ผู้ดำเนินรายการ — [ตัวอย่าง] บรรณาธิการ,APPROVED,,,,
+EX-D1-02,Main Stage,,2026-11-04,9:00:00,10:00,[ตัวอย่าง] เวลาแบบ Google Sheet 9:00:00,,,,APPROVED,,,,
+EX-D1-03,X Stage,,2026-11-04,10:00,11:00,[ตัวอย่าง] X Stage เซสชันสด 10:00–11:00,,[ตัวอย่าง] ผู้พูด ง — [ตัวอย่าง] นักวิเคราะห์,,APPROVED,,,,https://example.com/live
+EX-D1-04,Main Stage,,2026-11-04,11:00,11:45,[ตัวอย่าง] เซสชันที่ถูกยกเลิก,,,,APPROVED,,ยกเลิก,[ตัวอย่าง] ยกเลิกเซสชันนี้,
+EX-D1-05,Main Stage,,2026-11-04,13:00,13:45,"[ตัวอย่าง] <img src=x onerror=""window.__xss=1""> ทดสอบ XSS",,,,APPROVED,,เลื่อนเวลา,[ตัวอย่าง] เลื่อนจาก 12:30,javascript:alert(1)
+EX-D1-06,X Stage,,2026-11-04,14:00,14:45,[ตัวอย่าง] SHOULD_NOT_RENDER_REVIEW,,,,REVIEW,,,,
+EX-D1-07,X Stage,,2026-11-04,15:00,15:45,[ตัวอย่าง] SHOULD_NOT_RENDER_HOLD,,,,APPROVED,HOLD,,,
+EX-D1-08,X Stage,,2026-11-04,16:00,16:45,[ตัวอย่าง] SHOULD_NOT_RENDER_LOWER,,,, approved ,,,,
+EX-D1-09,Main Stage,,4/11/2026,16:00,16:45,[ตัวอย่าง] SHOULD_NOT_RENDER_BADDATE,,,,APPROVED,,,,
+EX-D1-10,Main Stage,,2026-11-04,17:00,16:00,[ตัวอย่าง] SHOULD_NOT_RENDER_ENDSTART,,,,APPROVED,,,,
+EX-D1-11,Side Stage,,2026-11-04,17:00,17:30,[ตัวอย่าง] SHOULD_NOT_RENDER_ZONE,,,,APPROVED,,,,
+EX-D2-01,Main Stage,,2026-11-05,09:30,10:15,[ตัวอย่าง] วันที่ 2 เซสชัน 1,,,,APPROVED,,เพิ่มใหม่,,
+EX-D2-02,X Stage,,2026-11-05,10:30,11:15,[ตัวอย่าง] วันที่ 2 X Stage,,,,APPROVED,,เปลี่ยนเวที,[ตัวอย่าง] ย้ายมาจาก Main Stage,
+EX-D3-01,Main Stage,,2026-11-06,09:30,10:15,[ตัวอย่าง] วันที่ 3 เซสชัน 1,,,,APPROVED,,,,

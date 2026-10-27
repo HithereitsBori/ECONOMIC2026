@@ -1,0 +1,3 @@
+faq_id,audience,category,question,answer,publication_status,hold_flag,sort_order
+STF-01,staff,[ตัวอย่าง] ทีมงาน,[ตัวอย่าง] STAFF_FIXTURE_QUESTION คำถามทีมงาน,[ตัวอย่าง] คำตอบสำหรับทีมงาน (ไม่ใช่ข้อมูลจริง),APPROVED,,1
+STF-02,staff,[ตัวอย่าง] ทีมงาน,[ตัวอย่าง] SHOULD_NOT_RENDER_STAFF_HOLD,[ตัวอย่าง] x,APPROVED,HOLD,2

@@ -1,0 +1,24 @@
+{
+  "name": "ef2026-onsite-guide",
+  "private": true,
+  "version": "0.1.0",
+  "description": "THE STANDARD Economic Forum 2026 onsite guide — one codebase, two sites (attendee / staff)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:attendee": "node scripts/build.mjs --audience attendee --out dist/attendee",
+    "build:staff": "node scripts/build.mjs --audience staff --out dist/staff",
+    "build:all": "npm run build:attendee && npm run build:staff",
+    "build:fixtures": "node scripts/build.mjs --audience attendee --out dist/attendee --fixtures && node scripts/build.mjs --audience staff --out dist/staff --fixtures",
+    "build:netlify": "node scripts/build.mjs --out dist && node scripts/check-dist.mjs --dir dist",
+    "check": "node scripts/check-dist.mjs --dir dist/attendee --audience attendee && node scripts/check-dist.mjs --dir dist/staff --audience staff && node scripts/check-dist.mjs --source .",
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

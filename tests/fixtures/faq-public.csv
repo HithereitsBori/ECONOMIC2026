@@ -1,0 +1,6 @@
+faq_id,audience,category,question,answer,publication_status,hold_flag,sort_order
+PUB-10,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] คำถามลำดับ 10,[ตัวอย่าง] คำตอบลำดับ 10,APPROVED,,10
+PUB-02,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] คำถามลำดับ 2 <script>window.__xss=2</script>,[ตัวอย่าง] คำตอบลำดับ 2,APPROVED,,2
+PUB-03,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] SHOULD_NOT_RENDER_FAQ_REVIEW,[ตัวอย่าง] x,REVIEW,,3
+PUB-04,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] SHOULD_NOT_RENDER_FAQ_NOANSWER,,APPROVED,,4
+PUB-05,staff,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] SHOULD_NOT_RENDER_FAQ_AUDIENCE,[ตัวอย่าง] x,APPROVED,,5
