@@ -1,0 +1,15 @@
+# One repo -> two Netlify sites. Each site sets AUDIENCE (attendee|staff) and its own data env.
+# See README "Deploy: two Netlify sites".
+[build]
+  command = "npm run build:netlify"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+
+# Deploy previews / branch deploys use labelled sample data, never production data.
+[context.deploy-preview.environment]
+  FIXTURES = "1"
+[context.branch-deploy.environment]
+  FIXTURES = "1"

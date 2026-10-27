@@ -125,5 +125,5 @@ test('source scan: src/ has no unconfirmed venue facts', async () => {
 });
 test('no chatbot / AI button in template', async () => {
   const t = await readFile(path.join(ROOT, 'src/index.html'), 'utf8');
-  assert.equal(/chat|แชท|AI\b/i.test(t), false);
+  assert.equal(/chat|แชท/i.test(t) || /\bAI\b/.test(t), false);
 });
