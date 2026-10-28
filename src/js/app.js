@@ -8,6 +8,7 @@ import { selectPublishedSessions, selectPublishedFaq } from './lib/data.js';
 import { createCache } from './lib/cache.js';
 import { fetchDataset, computeFreshness } from './lib/loader.js';
 import { renderFaqList, FAQ_EMPTY } from './lib/faq-view.js';
+import { headerTexts, dayTabsHTML, zoneTabsHTML } from './lib/chrome.js';
 import { initAudience } from './audience.js';
 
 const $ = (id) => document.getElementById(id);
@@ -98,21 +99,18 @@ function updateStatus() {
 }
 
 // ---------- header / filters
+// Same markup is pre-rendered by scripts/build.mjs, so these updates never change layout (CLS).
 function renderHeader() {
-  $('event-tagline').textContent = ev.tagline || '';
-  const d = ev.days.map((x) => formatDayLabel(x, 'th').date);
-  $('event-meta').textContent = `${d[0]} – ${d.at(-1)} 2026 · ${ev.venue.th}`;
-  $('tz-label').textContent = `เวลาทั้งหมดเป็น${ev.timezoneLabel}`;
+  const t = headerTexts(ev);
+  $('event-tagline').textContent = t.tagline;
+  $('event-meta').textContent = t.meta;
+  $('tz-label').textContent = t.tz;
   if (SITE.fixtures) $('fixtures-banner').hidden = false;
 }
 
 function renderFilters() {
-  $('day-tabs').innerHTML = ev.days.map((iso, i) => {
-    const l = formatDayLabel(iso, 'th');
-    return `<button type="button" class="day" data-day="${iso}" aria-pressed="${iso === state.day}"><small>วันที่ ${i + 1} · ${escapeHTML(l.weekday)}</small><strong>${escapeHTML(l.date)}</strong></button>`;
-  }).join('');
-  $('zone-tabs-schedule').innerHTML = [ALL, ...ev.zones].map((z) =>
-    `<button type="button" class="chip" data-zone="${escapeHTML(z)}" aria-pressed="${z === state.zone}">${z === ALL ? 'ทุกเวที' : escapeHTML(z)}</button>`).join('');
+  $('day-tabs').innerHTML = dayTabsHTML(ev, state.day);
+  $('zone-tabs-schedule').innerHTML = zoneTabsHTML(ev, state.zone);
 }
 
 // ---------- agenda

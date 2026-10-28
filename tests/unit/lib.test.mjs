@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { parseCSVTable } from '../../src/js/lib/csv.js';
 import { escapeHTML, safeHttpsUrl, safeAssetPath } from '../../src/js/lib/escape.js';
-import { bangkokNow, normalizeHHMM, sessionTiming, defaultDay, formatBangkokTime } from '../../src/js/lib/time.js';
+import { bangkokNow, normalizeHHMM, sessionTiming, defaultDay, formatBangkokTime, formatDayLabel } from '../../src/js/lib/time.js';
 import { checkHeaders, SCHEDULE_REQUIRED } from '../../src/js/lib/schema.js';
 import { selectPublishedSessions, selectPublishedFaq, parsePeople } from '../../src/js/lib/data.js';
 
@@ -127,4 +127,11 @@ test('FAQ filters and sorts', () => {
 test('all-review fixture -> sessions []', () => {
   const r = selectPublishedSessions(parseCSVTable(fx('schedule-all-review.csv')).rows, opts);
   assert.equal(r.sessions.length, 0);
+});
+
+test('formatDayLabel th is deterministic (same in Node build and browser)', () => {
+  assert.deepEqual(formatDayLabel('2026-11-04', 'th'), { weekday: 'พ.', date: '4 พ.ย.' });
+  assert.deepEqual(formatDayLabel('2026-11-05', 'th'), { weekday: 'พฤ.', date: '5 พ.ย.' });
+  assert.deepEqual(formatDayLabel('2026-11-06'), { weekday: 'ศ.', date: '6 พ.ย.' });
+  assert.deepEqual(formatDayLabel('2026-11-06', 'en'), { weekday: 'Fri', date: '6 Nov' });
 });

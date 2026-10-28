@@ -106,13 +106,27 @@ Source: UX task t_a5ae4006 (`tokens.css` + `mockup.html`), approved by Bo. Token
 - Compact hero (~150px) so Day tabs + first session are above the fold on 360–390px phones.
   e2e `layout.spec.mjs` guards this plus "no yellow background / no radius > 4px".
 - Fonts: Archivo / Prompt / IBM Plex Sans Thai (Google Fonts, OFL) stand in for the brand fonts (rights unknown).
+  Self-hosted in `src/assets/fonts/` (thai + latin subsets, `@font-face` in `src/fonts.css`), all preloaded,
+  `font-display: optional` → no late font swap/CLS; on a very slow first visit the device Thai font is used for that view.
+
+## Performance (Lighthouse mobile gate ≥85, CLS ≤0.1)
+- Build inlines + minifies `fonts.css` + `styles.css` into `<style>` (no render-blocking CSS, no third-party requests),
+  adds `<link rel="modulepreload">` for every ES module (no import waterfall) and pre-renders the hero text and
+  Day/Stage tabs so JS boot doesn't shift layout. `#loading-state` reserves the viewport until data arrives.
+- Thai day labels use fixed tables (`formatDayLabel`) so Node pre-render == browser render.
+- Guard: `tests/e2e/perf.spec.mjs` (CLS < 0.1, no external requests, no stylesheet link). Lighthouse itself is run by hand
+  on the fixture preview: `node tests/e2e/build-e2e.mjs && node scripts/serve.mjs --dir .tmp/e2e --port 4191`, then
+  `lighthouse http://127.0.0.1:4191/fixtures/` and `/fixtures-staff/` (3 runs each, take the median).
 - Logo/KV: the header wordmark and hero lockup are CSS text placeholders. To use approved files, put them in
   `src/assets/` and replace `.wm` (header) / `.mast` background (hero) in `src/index.html` + `src/styles.css`.
 
 ## Content rules
 - No invented venue facts (restrooms, parking stamp, water, registration) — placeholders say "รอข้อมูลยืนยัน". A unit test and `npm run check` scan for these words in `src/`.
 - No passwords, personal phone numbers, VIP lists or security details in Sheet C — the staff link has no login.
-- Fixtures (`tests/fixtures/`) are sample data; every value starts with `[ตัวอย่าง]`.
+- Fixtures are sample data; every value starts with `[ตัวอย่าง]`. Two sets:
+  - `tests/fixtures/preview/*.csv` — clean editorial demo, the **only** data copied into `--fixtures` preview builds (shareable).
+  - `tests/fixtures/*.csv` — adversarial cases (XSS payloads, `9:00:00`, HOLD/REVIEW/lowercase approval, bad dates/zones,
+    staff markers) used only by unit tests and mocked e2e runs; never built into a preview.
 
 ## Repo layout
 `config/event.json` (dates, venue, stages, statuses) · `src/` (template, CSS, app, libs, audience modules) ·

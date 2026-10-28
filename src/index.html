@@ -12,11 +12,8 @@
 <meta property="og:type" content="website">
 <meta name="build-id" content="{{BUILD_ID}}">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<!-- Visual v2 fonts: Google Fonts (OFL) stand-ins for the brand fonts; falls back to system Thai fonts offline. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,100..125,600..800;1,100..125,800&family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Prompt:wght@600&display=swap">
-<link rel="stylesheet" href="styles.css">
+<!-- Visual v2 fonts: self-hosted Google Fonts (OFL) stand-ins for the brand fonts (src/fonts.css); CSS is inlined + minified at build. -->
+{{HEAD_ASSETS}}
 <script type="module" src="js/app.js"></script>
 </head>
 <!-- @if attendee -->
@@ -46,12 +43,12 @@
   <i class="glow-l" aria-hidden="true"></i><i class="glow-r" aria-hidden="true"></i><i class="st-l" aria-hidden="true"></i><i class="st-r" aria-hidden="true"></i>
   <div class="mast-in">
     <h1 id="event-name" class="lock"><span class="a">THE STANDARD</span> <span class="b">Economic Forum <i>2026</i></span></h1>
-    <p class="tagline" id="event-tagline"></p>
-    <p class="meta" id="event-meta"></p>
+    <p class="tagline" id="event-tagline">{{TAGLINE}}</p>
+    <p class="meta" id="event-meta">{{META}}</p>
   </div>
 </section>
 
-<div id="fixtures-banner" class="notice sample" role="note" hidden><b>ข้อมูลตัวอย่าง — ไม่ใช่กำหนดการจริง</b>หน้านี้ใช้ข้อมูลทดสอบสำหรับดูหน้าตาเท่านั้น</div>
+<div id="fixtures-banner" class="notice sample" role="note"{{FIXTURES_HIDDEN}}><b>ข้อมูลตัวอย่าง — ไม่ใช่กำหนดการจริง</b>หน้านี้ใช้ข้อมูลทดสอบสำหรับดูหน้าตาเท่านั้น</div>
 
 <div class="status-wrap"><div class="statusbar" id="statusbar" data-state="loading" role="status" aria-live="polite">
   <span class="dot" aria-hidden="true"></span>
@@ -64,9 +61,9 @@
   <!-- Agenda (shared) -->
   <section id="tab-agenda" class="tab" data-tab="agenda">
     <div class="filters">
-      <div class="days" id="day-tabs" role="group" aria-label="เลือกวัน"></div>
-      <div class="chips" id="zone-tabs-schedule" role="group" aria-label="เลือกเวที"></div>
-      <p class="tzlabel" id="tz-label"></p>
+      <div class="days" id="day-tabs" role="group" aria-label="เลือกวัน">{{DAY_TABS}}</div>
+      <div class="chips" id="zone-tabs-schedule" role="group" aria-label="เลือกเวที">{{ZONE_TABS}}</div>
+      <p class="tzlabel" id="tz-label">{{TZ}}</p>
     </div>
     <div id="loading-state" class="list" aria-hidden="true">
       <div class="skel-card"><div class="skel"></div><div class="skel"></div></div>
@@ -108,7 +105,7 @@
     <h3 class="sec-h">วันงานและสถานที่</h3>
     <div class="info-card" id="quick-info"></div>
     <h3 class="sec-h">คำถามที่พบบ่อย</h3>
-    <div id="faq-public" class="list"></div>
+    <div id="faq-public" class="list faq-list"></div>
   </section>
 
 <!-- @if attendee -->
@@ -121,9 +118,9 @@
   <section id="tab-staff" class="tab" data-tab="staff" hidden>
     <h2 class="sec-h">พื้นที่ทีมงาน / ตอบผู้ร่วมงาน</h2>
     <p class="sec-sub">ข้อมูลจากชีตทีมงานที่อนุมัติแล้วเท่านั้น · ไม่มีรหัสผ่าน ห้ามใส่ข้อมูลอ่อนไหว</p>
-    <div id="staff-faq" class="list"></div>
+    <div id="staff-faq" class="list faq-list"></div>
     <h3 class="sec-h">FAQ สำหรับตอบผู้ร่วมงาน (ชุดเดียวกับหน้าผู้เข้าร่วม)</h3>
-    <div id="staff-public-faq" class="list"></div>
+    <div id="staff-public-faq" class="list faq-list"></div>
   </section>
 <!-- @endif -->
 

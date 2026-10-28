@@ -1,0 +1,3 @@
+faq_id,audience,category,question,answer,publication_status,hold_flag,sort_order
+PUB-01,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] คำถามที่พบบ่อย ข้อ 1,[ตัวอย่าง] คำตอบตัวอย่าง — รอข้อมูลยืนยันจากผู้จัดงาน,APPROVED,,1
+PUB-02,public,[ตัวอย่าง] ทั่วไป,[ตัวอย่าง] คำถามที่พบบ่อย ข้อ 2,[ตัวอย่าง] คำตอบตัวอย่าง — รอข้อมูลยืนยันจากผู้จัดงาน,APPROVED,,2

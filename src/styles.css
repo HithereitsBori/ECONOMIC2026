@@ -162,6 +162,8 @@ main { max-width: var(--wrap); margin: 0 auto; outline: none; }
 .btn:active { background: var(--accent-deep); }
 .btn[disabled] { background: transparent; border: 1px dashed var(--line-strong); color: var(--text-3); cursor: not-allowed; }
 .skel-card { display: grid; grid-template-columns: 64px 1fr; gap: var(--s-3); padding: var(--s-4); border-bottom: 1px solid var(--line); }
+/* reserve the viewport while data loads so the footer/CTA never jump into view (CLS) */
+#loading-state { min-height: 100vh; }
 .skel { position: relative; overflow: hidden; height: 40px; background: var(--surface-2); }
 .skel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .07), transparent); transform: translateX(-100%); animation: sh 1.3s infinite; }
 @keyframes sh { to { transform: translateX(100%); } }
@@ -194,8 +196,8 @@ h3.sec-h { margin: 0; padding: var(--s-5) var(--s-4) var(--s-2); font: 700 13px/
 .info-card dl { margin: 0 0 var(--s-3); display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; }
 .info-card dt { color: var(--text-2); }
 .info-card dd { margin: 0; }
-#faq-public, #staff-faq, #staff-public-faq { border-bottom: 1px solid var(--line); }
-#faq-public:has(> .placeholder), #staff-faq:has(> .placeholder), #staff-public-faq:has(> .placeholder) { border-bottom: 0; padding: 0 var(--s-4); }
+.faq-list { border-bottom: 1px solid var(--line); }
+.faq-list:has(> .placeholder) { border-bottom: 0; padding: 0 var(--s-4); }
 .faq-item { border-top: 1px solid var(--line); }
 .faq-item summary { list-style: none; min-height: 56px; padding: var(--s-3) 48px var(--s-3) var(--s-4); position: relative; cursor: pointer; display: flex; flex-direction: column; justify-content: center; font: 600 16px/1.5 var(--f-head); overflow-wrap: anywhere; }
 .faq-item summary::-webkit-details-marker { display: none; }

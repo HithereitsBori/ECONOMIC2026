@@ -92,6 +92,25 @@ test.describe('FAQ + survey placeholders', () => {
 });
 
 test.describe('fixtures preview mode', () => {
+  // The shareable preview must read as an editorial demo: no adversarial/test payloads, no emoji in the title.
+  const FORBIDDEN = /<script|<img|onerror|__xss|9:00:00|Google Sheet|STAFF_FIXTURE|SHOULD_NOT_RENDER|javascript:/i;
+  const EMOJI = /\p{Extended_Pictographic}/u;
+  for (const [site, tabs] of [['fixtures', ['agenda', 'speakers', 'faq', 'survey']], ['fixtures-staff', ['agenda', 'faq', 'staff']]]) {
+    test(`${site}: every tab is free of test payloads; title has no emoji`, async ({ page }) => {
+      await page.goto(`/${site}/`);
+      await ready(page);
+      expect(await page.title()).not.toMatch(EMOJI);
+      for (const tab of tabs) {
+        await page.locator(`#bottom-nav [data-tab="${tab}"]`).click();
+        await expect(page.locator(`#tab-${tab}`)).toBeVisible();
+        expect(await page.locator('body').innerText(), tab).not.toMatch(FORBIDDEN);
+      }
+      const csv = await (await page.request.get(`/${site}/fixtures/schedule.csv`)).text();
+      expect(csv).not.toMatch(FORBIDDEN);
+      await page.locator('#bottom-nav [data-tab="faq"]').click();
+      await expect(page.locator('#quick-info')).toContainText('รอข้อมูลยืนยัน');
+    });
+  }
   test('labelled sample banner and no Google requests', async ({ page }, testInfo) => {
     const google = [];
     page.on('request', (r) => { if (r.url().includes('docs.google.com')) google.push(r.url()); });
@@ -102,12 +121,15 @@ test.describe('fixtures preview mode', () => {
     await expect(page.locator('#schedule-list .card-s')).toHaveCount(5);
     expect(google).toEqual([]);
     await shot(page, testInfo, 'attendee-fixtures');
+    await page.locator('#bottom-nav [data-tab="faq"]').click();
+    await expect(page.locator('#faq-public .faq-item')).toHaveCount(2);
+    await shot(page, testInfo, 'attendee-fixtures-faq');
   });
   test('staff fixtures preview', async ({ page }, testInfo) => {
     await page.goto('/fixtures-staff/?tab=staff');
     await ready(page);
     await expect(page.locator('#fixtures-banner')).toBeVisible();
-    await expect(page.locator('#staff-faq')).toContainText('STAFF_FIXTURE_QUESTION');
+    await expect(page.locator('#staff-faq')).toContainText('[ตัวอย่าง] คำถามสำหรับทีมงาน');
     await shot(page, testInfo, 'staff-fixtures-area');
   });
 });
