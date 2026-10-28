@@ -11,7 +11,7 @@ One codebase builds two separate static sites:
 Staff code/data never enters the attendee build: the template's `<!-- @if staff -->` blocks are removed,
 `src/js/audience/staff.js` is not copied, and `STAFF_FAQ_CSV_URL` is not read for attendee. `npm run check` enforces this.
 
-Status: **functional MVP, local only** — not pushed, not deployed. Styling is an **interim neutral theme**
+Status: **functional MVP, local only** — not pushed, not deployed. Styling is **visual v2** (black/white + red/blue CI, approved by Bo)
 (see "Design tokens"). Chatbot is out of scope for phase 1 (no chat button).
 
 ## Quick start
@@ -56,7 +56,7 @@ Edit Sheet B `Schedule` → change `onsite_status` / `onsite_note` → users get
 (auto every 5 min + jitter while the tab is visible, or the รีเฟรช button). Google's publish cache adds delay — measure before the event (plan T13).
 
 ### Behaviour when things break
-- Network down / Google error / renamed column → keep last good cache, yellow banner
+- Network down / Google error / renamed column → keep last good cache, warning banner
   "เชื่อมต่อข้อมูลล่าสุดไม่ได้ — แสดงข้อมูลเมื่อ HH:MM น."; never overwrite cache with a bad response.
 - No cache and no network → error state with "ลองใหม่". Empty data URL → "ยังไม่ได้เชื่อมข้อมูล" (no mock fallback).
 - All times use **Asia/Bangkok** regardless of the phone's timezone.
@@ -95,13 +95,19 @@ Do **not** write the staff site URL or any real CSV URL into this repo.
    ```
 6. Both sites send `X-Robots-Tag: noindex` and a strict CSP via `dist/_headers`.
 
-## Design tokens (handoff to UX revision)
+## Design tokens (visual v2)
 
-The first yellow mockup was rejected. `src/styles.css` currently uses a restrained neutral theme.
-To apply the revised design, edit **only** the two token blocks at the top of `src/styles.css`:
-`:root { … }` (colours, fonts, radii) and `body.aud-staff { … }` (staff header/accent).
-Fonts: replace the Google Fonts `<link>` in `src/index.html` (CSP already allows Google Fonts).
-Logo: replace the `.logo-ph` "รอโลโก้" box in `src/index.html` with an approved asset in `src/assets/`.
+Source: UX task t_a5ae4006 (`tokens.css` + `mockup.html`), approved by Bo. Tokens live in the
+`:root` / `body.aud-staff` blocks at the top of `src/styles.css`; components use `var(--…)` only.
+- Attendee accent = red `--red-action #E10600`; staff accent = blue `--blue #2B5BFF` + navy STAFF ONLY bar.
+  Never put small text on `--red #FF0000` (4.0:1) — it is only for large glow/graphic use.
+- Radius 0–4px only, no pill, no decorative icons/emoji, no gradient in UI (light/streaks only in the hero `.mast`).
+- No yellow anywhere: the TH/EN toggle from the mockup is **not** shipped (Thai-only until EN copy is reviewed).
+- Compact hero (~150px) so Day tabs + first session are above the fold on 360–390px phones.
+  e2e `layout.spec.mjs` guards this plus "no yellow background / no radius > 4px".
+- Fonts: Archivo / Prompt / IBM Plex Sans Thai (Google Fonts, OFL) stand in for the brand fonts (rights unknown).
+- Logo/KV: the header wordmark and hero lockup are CSS text placeholders. To use approved files, put them in
+  `src/assets/` and replace `.wm` (header) / `.mast` background (hero) in `src/index.html` + `src/styles.css`.
 
 ## Content rules
 - No invented venue facts (restrooms, parking stamp, water, registration) — placeholders say "รอข้อมูลยืนยัน". A unit test and `npm run check` scan for these words in `src/`.

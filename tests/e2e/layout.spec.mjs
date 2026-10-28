@@ -32,6 +32,30 @@ for (const vp of [{ width: 360, height: 740 }, { width: 390, height: 844 }]) {
       });
     }
 
+    for (const site of ['attendee', 'staff']) {
+      test(`${site}: visual v2 — compact hero keeps first session above the fold, no yellow, no pill`, async ({ page }) => {
+        await mockSheets(page);
+        await page.goto(`/${site}/`);
+        await ready(page);
+        const first = await page.locator('#schedule-list .card-s').first().boundingBox();
+        const nav = await page.locator('#bottom-nav').boundingBox();
+        expect(first.y + 60, 'first session row visible without scrolling').toBeLessThanOrEqual(nav.y);
+        const bad = await page.evaluate(() => {
+          const out = [];
+          for (const el of document.querySelectorAll('body *')) {
+            if (!el.offsetParent && getComputedStyle(el).position !== 'fixed') continue;
+            const cs = getComputedStyle(el);
+            const m = cs.backgroundColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?/);
+            if (m && (m[4] === undefined || +m[4] > 0.2) && +m[1] > 200 && +m[2] > 170 && +m[3] < 90) out.push(`yellow bg: ${el.className || el.tagName}`);
+            const r = parseFloat(cs.borderTopLeftRadius);
+            if (r > 4 && !el.classList.contains('dot')) out.push(`radius ${r}px: ${el.className || el.tagName}`);
+          }
+          return out;
+        });
+        expect(bad).toEqual([]);
+      });
+    }
+
     test('attendee promo is inline 4th element, never fixed/sticky, no popup within 8s', async ({ page }) => {
       await mockSheets(page);
       await page.goto('/attendee/');

@@ -93,7 +93,7 @@ function updateStatus() {
   else { text.textContent = 'โหลดไม่สำเร็จ'; small.textContent = tz; }
   if (f === 'offline-stale') {
     banner.hidden = false;
-    banner.innerHTML = `<b>⚠️ เชื่อมต่อข้อมูลล่าสุดไม่ได้ — แสดงข้อมูลเมื่อ ${escapeHTML(at)}</b>กดรีเฟรชเพื่อลองใหม่ เวลา/สถานะอาจไม่เป็นปัจจุบัน`;
+    banner.innerHTML = `<b>เชื่อมต่อข้อมูลล่าสุดไม่ได้ — แสดงข้อมูลเมื่อ ${escapeHTML(at)}</b>กดรีเฟรชเพื่อลองใหม่ เวลา/สถานะอาจไม่เป็นปัจจุบัน`;
   } else banner.hidden = true;
 }
 
@@ -184,7 +184,6 @@ function renderSpeakers() {
   if (!map.size) { el.innerHTML = '<div class="placeholder"><b>รอข้อมูลยืนยัน</b>รายชื่อผู้พูดจะแสดงเมื่อ Agenda ได้รับการยืนยัน</div>'; return; }
   el.innerHTML = [...map.values()].map((p) => `
     <div class="sp">
-      <span class="avatar" aria-hidden="true">${escapeHTML([...p.name.replace(/^\[ตัวอย่าง\]\s*/, '')][0] || '?')}</span>
       <span class="sp-body"><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}
       <span class="sp-sessions">${p.sessions.map((s) => `${escapeHTML(formatDayLabel(s.date).date)} ${escapeHTML(s.start)} · ${escapeHTML(s.zone)}`).join('<br>')}</span></span>
     </div>`).join('');
@@ -195,7 +194,7 @@ let lastFocus = null;
 function openSheet(id) {
   const s = state.sessions.find((x) => x.id === id);
   if (!s) return;
-  const people = s.people.map((p) => `<div class="person"><span class="avatar" aria-hidden="true">${escapeHTML([...p.name.replace(/^\[ตัวอย่าง\]\s*/, '')][0] || '?')}</span><div><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}<span class="role">${p.role === 'Moderator' ? 'ผู้ดำเนินรายการ' : 'ผู้พูด'}</span></div></div>`).join('');
+  const people = s.people.map((p) => `<div class="person"><div><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}<span class="role">${p.role === 'Moderator' ? 'ผู้ดำเนินรายการ' : 'ผู้พูด'}</span></div></div>`).join('');
   const stream = s.streamUrl ? `<a class="btn" href="${escapeHTML(s.streamUrl)}" target="_blank" rel="noopener">รับชมออนไลน์</a>` : '';
   $('session-sheet-content').innerHTML = `
     <p class="sheet-meta">${escapeHTML(formatDayLabel(s.date).date)} · ${escapeHTML(s.start)}–${escapeHTML(s.end)} น. · ${escapeHTML(s.zone)}</p>
