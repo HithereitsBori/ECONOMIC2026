@@ -125,5 +125,49 @@ test('source scan: src/ has no unconfirmed venue facts', async () => {
 });
 test('no chatbot / AI button in template', async () => {
   const t = await readFile(path.join(ROOT, 'src/index.html'), 'utf8');
-  assert.equal(/chat|แชท|AI\b/i.test(t), false);
+  assert.equal(/chat|แชท/i.test(t) || /\bAI\b/.test(t), false);
+});
+
+// ---- QA t_205ada71 follow-up: shareable preview, performance, title
+const PREVIEW_FORBIDDEN = /<script|<img|onerror|__xss|9:00:00|Google Sheet|STAFF_FIXTURE|SHOULD_NOT_RENDER|javascript:/i;
+test('fixture preview ships only clean editorial demo data (adversarial fixtures stay in tests)', async () => {
+  for (const audience of ['attendee', 'staff']) {
+    const out = await tmp();
+    const { files } = await build({ audience, outDir: out, env: {}, fixtures: true });
+    const csvs = files.filter((f) => f.endsWith('.csv'));
+    assert.ok(csvs.length >= 2);
+    for (const f of csvs) {
+      const text = await readFile(path.join(out, f), 'utf8');
+      assert.equal(PREVIEW_FORBIDDEN.test(text), false, `${audience}/${f}`);
+      for (const line of text.trim().split('\n').slice(1)) if (/^[A-Z]+-/.test(line)) assert.match(line, /\[ตัวอย่าง\]/, `${f}: ${line}`);
+    }
+  }
+  // the adversarial cases are still present for unit/e2e coverage
+  const adversarial = await readFile(path.join(ROOT, 'tests/fixtures/schedule.csv'), 'utf8');
+  assert.match(adversarial, /onerror/);
+  assert.match(adversarial, /9:00:00/);
+  assert.match(adversarial, /HOLD/);
+});
+test('index.html: no emoji title, inlined minified CSS, self-hosted fonts, pre-rendered chrome, modulepreload', async () => {
+  for (const audience of ['attendee', 'staff']) {
+    const out = await tmp();
+    const { files } = await build({ audience, outDir: out, env: ENV });
+    const html = await readFile(path.join(out, 'index.html'), 'utf8');
+    const title = html.match(/<title>(.*?)<\/title>/)[1];
+    assert.equal(/\p{Extended_Pictographic}/u.test(title), false, title);
+    assert.equal(/fonts\.googleapis|fonts\.gstatic|rel="stylesheet"/.test(html), false);
+    assert.match(html, /<style>@font-face\{/);
+    assert.equal(/\{\{|\/\*/.test(html.match(/<style>([\s\S]*?)<\/style>/)[1]), false);
+    assert.match(html, /<link rel="preload" href="assets\/fonts\/plexthai-400-thai\.woff2" as="font" type="font\/woff2" crossorigin>/);
+    assert.match(html, /<link rel="modulepreload" href="js\/lib\/data\.js">/);
+    assert.match(html, /id="day-tabs"[^>]*><button type="button" class="day" data-day="2026-11-04"/);
+    assert.match(html, /id="event-meta">4 พ\.ย\. – 6 พ\.ย\. 2026 · /);
+    assert.match(html, /id="fixtures-banner"[^>]* hidden>/);
+    for (const m of html.matchAll(/(?:href|src)="(assets\/fonts\/[^"]+|js\/[^"]+)"/g)) assert.ok(files.includes(m[1]), `missing ${m[1]}`);
+    assert.doesNotMatch(await readFile(path.join(out, '_headers'), 'utf8'), /fonts\.g/);
+  }
+});
+test('minifyCSS strips comments/whitespace but keeps descendant combinators', async () => {
+  const { minifyCSS } = await import('../../scripts/build.mjs');
+  assert.equal(minifyCSS('/* x */ .a  .b :focus { color: red ; }\n.c > .d , .e { margin : 0 }'), '.a .b :focus{color: red}.c>.d,.e{margin : 0}');
 });

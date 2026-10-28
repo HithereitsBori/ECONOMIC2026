@@ -38,12 +38,20 @@ export function formatBangkokTime(ts) {
   return hmFmt.format(new Date(ts));
 }
 
+// Thai labels come from fixed tables (not Intl): ICU data differs between Node (build-time
+// pre-render) and browsers (e.g. "พุธ" vs "พ."), and a width change after boot is a layout shift.
+const TH_WEEKDAY = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+const TH_MONTH = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
 export function formatDayLabel(iso, locale = 'th') {
+  if (locale !== 'en') {
+    const [y, m, d] = iso.split('-').map(Number);
+    return { weekday: TH_WEEKDAY[new Date(Date.UTC(y, m - 1, d)).getUTCDay()], date: `${d} ${TH_MONTH[m - 1]}` };
+  }
   // Noon UTC keeps the calendar day stable when rendered in Asia/Bangkok.
   const d = new Date(`${iso}T05:00:00Z`);
-  const loc = locale === 'en' ? 'en-GB' : 'th-TH';
-  const weekday = new Intl.DateTimeFormat(loc, { timeZone: TZ, weekday: 'short' }).format(d);
-  const date = new Intl.DateTimeFormat(loc, { timeZone: TZ, day: 'numeric', month: 'short' }).format(d);
+  const weekday = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short' }).format(d);
+  const date = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'short' }).format(d);
   return { weekday, date };
 }
 

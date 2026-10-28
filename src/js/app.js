@@ -8,6 +8,7 @@ import { selectPublishedSessions, selectPublishedFaq } from './lib/data.js';
 import { createCache } from './lib/cache.js';
 import { fetchDataset, computeFreshness } from './lib/loader.js';
 import { renderFaqList, FAQ_EMPTY } from './lib/faq-view.js';
+import { headerTexts, dayTabsHTML, zoneTabsHTML } from './lib/chrome.js';
 import { initAudience } from './audience.js';
 
 const $ = (id) => document.getElementById(id);
@@ -93,26 +94,23 @@ function updateStatus() {
   else { text.textContent = 'โหลดไม่สำเร็จ'; small.textContent = tz; }
   if (f === 'offline-stale') {
     banner.hidden = false;
-    banner.innerHTML = `<b>⚠️ เชื่อมต่อข้อมูลล่าสุดไม่ได้ — แสดงข้อมูลเมื่อ ${escapeHTML(at)}</b>กดรีเฟรชเพื่อลองใหม่ เวลา/สถานะอาจไม่เป็นปัจจุบัน`;
+    banner.innerHTML = `<b>เชื่อมต่อข้อมูลล่าสุดไม่ได้ — แสดงข้อมูลเมื่อ ${escapeHTML(at)}</b>กดรีเฟรชเพื่อลองใหม่ เวลา/สถานะอาจไม่เป็นปัจจุบัน`;
   } else banner.hidden = true;
 }
 
 // ---------- header / filters
+// Same markup is pre-rendered by scripts/build.mjs, so these updates never change layout (CLS).
 function renderHeader() {
-  $('event-tagline').textContent = ev.tagline || '';
-  const d = ev.days.map((x) => formatDayLabel(x, 'th').date);
-  $('event-meta').textContent = `${d[0]} – ${d.at(-1)} 2026 · ${ev.venue.th}`;
-  $('tz-label').textContent = `เวลาทั้งหมดเป็น${ev.timezoneLabel}`;
+  const t = headerTexts(ev);
+  $('event-tagline').textContent = t.tagline;
+  $('event-meta').textContent = t.meta;
+  $('tz-label').textContent = t.tz;
   if (SITE.fixtures) $('fixtures-banner').hidden = false;
 }
 
 function renderFilters() {
-  $('day-tabs').innerHTML = ev.days.map((iso, i) => {
-    const l = formatDayLabel(iso, 'th');
-    return `<button type="button" class="day" data-day="${iso}" aria-pressed="${iso === state.day}"><small>วันที่ ${i + 1} · ${escapeHTML(l.weekday)}</small><strong>${escapeHTML(l.date)}</strong></button>`;
-  }).join('');
-  $('zone-tabs-schedule').innerHTML = [ALL, ...ev.zones].map((z) =>
-    `<button type="button" class="chip" data-zone="${escapeHTML(z)}" aria-pressed="${z === state.zone}">${z === ALL ? 'ทุกเวที' : escapeHTML(z)}</button>`).join('');
+  $('day-tabs').innerHTML = dayTabsHTML(ev, state.day);
+  $('zone-tabs-schedule').innerHTML = zoneTabsHTML(ev, state.zone);
 }
 
 // ---------- agenda
@@ -184,7 +182,6 @@ function renderSpeakers() {
   if (!map.size) { el.innerHTML = '<div class="placeholder"><b>รอข้อมูลยืนยัน</b>รายชื่อผู้พูดจะแสดงเมื่อ Agenda ได้รับการยืนยัน</div>'; return; }
   el.innerHTML = [...map.values()].map((p) => `
     <div class="sp">
-      <span class="avatar" aria-hidden="true">${escapeHTML([...p.name.replace(/^\[ตัวอย่าง\]\s*/, '')][0] || '?')}</span>
       <span class="sp-body"><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}
       <span class="sp-sessions">${p.sessions.map((s) => `${escapeHTML(formatDayLabel(s.date).date)} ${escapeHTML(s.start)} · ${escapeHTML(s.zone)}`).join('<br>')}</span></span>
     </div>`).join('');
@@ -195,7 +192,7 @@ let lastFocus = null;
 function openSheet(id) {
   const s = state.sessions.find((x) => x.id === id);
   if (!s) return;
-  const people = s.people.map((p) => `<div class="person"><span class="avatar" aria-hidden="true">${escapeHTML([...p.name.replace(/^\[ตัวอย่าง\]\s*/, '')][0] || '?')}</span><div><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}<span class="role">${p.role === 'Moderator' ? 'ผู้ดำเนินรายการ' : 'ผู้พูด'}</span></div></div>`).join('');
+  const people = s.people.map((p) => `<div class="person"><div><b>${escapeHTML(p.name)}</b>${p.title ? `<small>${escapeHTML(p.title)}</small>` : ''}<span class="role">${p.role === 'Moderator' ? 'ผู้ดำเนินรายการ' : 'ผู้พูด'}</span></div></div>`).join('');
   const stream = s.streamUrl ? `<a class="btn" href="${escapeHTML(s.streamUrl)}" target="_blank" rel="noopener">รับชมออนไลน์</a>` : '';
   $('session-sheet-content').innerHTML = `
     <p class="sheet-meta">${escapeHTML(formatDayLabel(s.date).date)} · ${escapeHTML(s.start)}–${escapeHTML(s.end)} น. · ${escapeHTML(s.zone)}</p>
